@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_flutter/Firebase_streamBuilder.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart'; // 구글 로그인 관련 패키지
 
@@ -111,6 +112,23 @@ class _MyAppState extends State<MyApp> {
                               },
                               child: Text("StreamBuilder 이용"),
                               color: Colors.deepPurple);
+                        },
+                      ),
+                      Builder(
+                        builder: (ctx) {
+                          return RaisedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  ctx,
+                                  MaterialPageRoute(
+                                    builder: (ctx) {
+                                      return FirebaseStreamBuilder();
+                                    },
+                                  ),
+                                );
+                              },
+                              child: Text("Firebase 이용"),
+                              color: Colors.deepOrangeAccent);
                         },
                       ),
                     ],
