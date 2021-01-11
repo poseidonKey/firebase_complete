@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class _MyAppState extends State<MyApp> {
   String birth = "00월 00일";
 
   final DocumentReference documentReference =
-      Firestore.instance.document("test-collection/qYNfNWt7x3kG1Aquahmu");
+      Firestore.instance.document("test-collection/qYNfNWt7x3kG1Aquahmu1");
 
   // 로그인 함수
   _login() async {
@@ -57,7 +58,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return MaterialApp(
       home: Scaffold(
         body: Center(
@@ -95,7 +95,24 @@ class _MyAppState extends State<MyApp> {
                           onPressed: _delete,
                           child: Text("데이터 삭제하기"),
                           color: Colors.orangeAccent),
-                      Text(birth)
+                      Text(birth),
+                      Builder(
+                        builder: (ctx) {
+                          return RaisedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  ctx,
+                                  MaterialPageRoute(
+                                    builder: (ctx) {
+                                      return StreamBuilderTest();
+                                    },
+                                  ),
+                                );
+                              },
+                              child: Text("StreamBuilder 이용"),
+                              color: Colors.deepPurple);
+                        },
+                      ),
                     ],
                   )
                 : Center(
@@ -146,5 +163,60 @@ class _MyAppState extends State<MyApp> {
     documentReference.delete().whenComplete(() {
       print("delete");
     }).catchError((e) => print(e));
+  }
+}
+
+class StreamBuilderTest extends StatefulWidget {
+  @override
+  _StreamBuilderTestState createState() => _StreamBuilderTestState();
+}
+
+class _StreamBuilderTestState extends State<StreamBuilderTest> {
+  int _counter = 0;
+  StreamController<int> _events;
+
+  @override
+  initState() {
+    super.initState();
+    _events = new StreamController<int>();
+    _events.add(0);
+  }
+
+  void _incrementCounter() {
+    _counter++;
+    _events.add(_counter);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text("StreamBuilder test"),
+      ),
+      body: new Center(
+        child: new Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Text(
+              'You have pushed the button this many times:',
+            ),
+            StreamBuilder(
+              stream: _events.stream,
+              builder: (BuildContext context, snapshot) {
+                return new Text(
+                  snapshot.data.toString(),
+                  style: Theme.of(context).textTheme.headline3,
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: new FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: new Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
   }
 }
